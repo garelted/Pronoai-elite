@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Métré Garel</title>
+    <style>
+        :root { --dark: #1a1a1a; --share: #007AFF; --bg: #f2f2f7; --blue-light: #e1f5fe; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 15px; color: #333; }
+        .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 450px; margin: auto; }
+        
+        .header { text-align: center; margin-bottom: 15px; border-bottom: 2px solid var(--dark); padding-bottom: 15px; }
+        .header h1 { margin: 0; font-size: 1.4rem; letter-spacing: 1px; }
+        .header .infos { font-size: 0.85rem; font-weight: bold; margin-top: 5px; color: #444; line-height: 1.4; }
+        
+        .section-title { margin-top:15px; font-size: 0.75rem; color: #8e8e93; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 3px; }
+        label { display: block; font-size: 0.7rem; font-weight: bold; margin: 10px 0 4px; color: #8e8e93; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #d1d1d6; border-radius: 10px; font-size: 1rem; box-sizing: border-box; background: #fff; }
+        
+        .row { display: flex; gap: 10px; align-items: flex-end; }
+        .col { flex: 1; }
+        
+        .piece-row { background: #f9f9f9; padding: 12px; border-radius: 12px; margin-top: 10px; border: 1px solid #efefef; }
+        .btn-add { background: var(--blue-light); color: #0288d1; border: 1px dashed #0288d1; padding: 10px; border-radius: 10px; width: 100%; margin: 10px 0; font-weight: bold; font-size: 0.9rem; cursor: pointer; }
+        
+        .photo-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .photo-preview { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; border: 1px solid #ddd; }
+        .input-file { display: none; }
+        .btn-photo { background: #e5e5ea; color: #333; padding: 12px; border-radius: 10px; text-align: center; font-weight: bold; font-size: 0.9rem; cursor: pointer; display: block; margin-top: 10px; border: 1px solid #d1d1d6; }
+
+        button { width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: bold; font-size: 1rem; margin-top: 15px; cursor: pointer; color: white; }
+        .btn-black { background: var(--dark); }
+        .btn-share { background: var(--share); display: none; margin-top: 10px; }
+        
+        #resultat { margin-top: 20px; display: none; background: #f8f8f8; padding: 15px; border-radius: 10px; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap; border: 1px solid #e5e5ea; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <h1>GAREL & FILS</h1>
+        <div class="infos">📞 06 77 11 16 05<br>✉️ acri42@yahoo.fr</div>
+    </div>
+
+    <div class="section-title">👤 Client & Chantier</div>
+    <label>Nom du Client</label>
+    <input type="text" id="client" placeholder="Nom du Client">
+    <div class="row">
+        <div class="col"><label>Tél</label><input type="tel" id="telClient"></div>
+        <div class="col"><label>Email</label><input type="email" id="emailClient"></div>
+    </div>
+    <label>Adresse du chantier</label>
+    <input type="text" id="adresseChantier" placeholder="Rue, Ville, CP">
+
+    <div class="section-title">📐 Surfaces par pièce</div>
+    <div id="piecesContainer">
+        <div class="piece-row">
+            <input type="text" class="nom-piece" placeholder="Nom (ex: Salon)" style="margin-bottom: 8px; font-size: 0.9rem; height: 35px;">
+            <div class="row">
+                <div class="col"><label>Sol (m²)</label><input type="number" class="val-sol" placeholder="0"></div>
+                <div class="col"><label>Plinthes (ml)</label><input type="number" class="val-pl" placeholder="0"></div>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn-add" onclick="ajouterPiece()">+ AJOUTER UNE PIÈCE</button>
+
+    <div class="section-title">📸 Photos du Chantier</div>
+    <label for="photo-upload" class="btn-photo">📷 AJOUTER DES PHOTOS</label>
+    <input type="file" id="photo-upload" class="input-file" accept="image/*" multiple onchange="previewPhotos()">
+    <div id="photo-preview-container" class="photo-container"></div>
+
+    <div class="section-title">🏗️ Support & Préparation</div>
+    <label>Nature du support</label>
+    <select id="support">
+        <option>Chape ciment</option>
+        <option>Ragréage</option>
+        <option>Ancien carrelage</option>
+        <option>Plancher bois / Panneaux</option>
+        <option>Chape anhydrite</option>
+        <option>Murs (Plâtre / Placo)</option>
+    </select>
+    <div class="row">
+        <div class="col"><label>Étanchéité (SEL)</label><select id="etancheite"><option>Non</option><option>Oui</option></select></div>
+        <div class="col"><label>Primaire</label><select id="primaire"><option>Standard</option><option>Sablé</option><option>Non</option></select></div>
+    </div>
+
+    <div class="section-title">📦 Marges & Divers</div>
+    <div class="row">
+        <div class="col"><label>Marge Sol %</label><input type="number" id="mSol" value="10"></div>
+        <div class="col"><label>Marge Pl. %</label><input type="number" id="mPl" value="5"></div>
+    </div>
+    <label>Baguettes / Profilés (Unité U)</label>
+    <input type="number" id="bag" placeholder="Nb de barres">
+
+    <div class="section-title">🎨 Technique Carrelage</div>
+    <label>Format</label>
+    <select id="format">
+        <option>Standard (45x45 / 60x60)</option>
+        <option>Petit format (10x10 / 20x20)</option>
+        <option>Métro / Crédence</option>
+        <option>Lame Parquet</option>
+        <option>Rectangulaire (30x60 / 30x90)</option>
+        <option>Grand Format (80x80 / 90x90)</option>
+        <option>XXL (120x120+)</option>
+        <option>Mosaïque / Galets</option>
+    </select>
+    <div class="row">
+        <div class="col"><label>Joint</label><select id="joint"><option>Gris Clair</option><option>Anthracite</option><option>Beige</option><option>Époxy</option></select></div>
+        <div class="col"><label>Silicone</label><select id="silicone"><option>Non</option><option>Oui</option></select></div>
+    </div>
+
+    <label>Remarques</label>
+    <textarea id="note" rows="2" placeholder="Accès, dépose..."></textarea>
+
+    <button class="btn-black" onclick="calculer()">🚀 CALCULER LE TOTAL</button>
+
+    <div id="resultat"></div>
+    <button id="shareBtn" class="btn-share" onclick="partager()">📤 PARTAGER LE RELEVÉ</button>
+</div>
+
+<script>
+    function ajouterPiece() {
+        const container = document.getElementById('piecesContainer');
+        const div = document.createElement('div');
+        div.className = 'piece-row';
+        div.innerHTML = `<input type="text" class="nom-piece" placeholder="Nom de la pièce" style="margin-bottom: 8px; font-size: 0.9rem; height: 35px;"><div class="row"><div class="col"><label>Sol (m²)</label><input type="number" class="val-sol" placeholder="0"></div><div class="col"><label>Plinthes (ml)</label><input type="number" class="val-pl" placeholder="0"></div></div>`;
+        container.appendChild(div);
+    }
+
+    function previewPhotos() {
+        const container = document.getElementById('photo-preview-container');
+        const files = document.getElementById('photo-upload').files;
+        for (let i = 0; i < files.length; i++) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'photo-preview';
+                container.appendChild(img);
+            }
+            reader.readAsDataURL(files[i]);
+        }
+    }
+
+    let texteAPartager = "";
+
+    function calculer() {
+        const client = document.getElementById('client').value || "Chantier";
+        const tel = document.getElementById('telClient').value || "N/A";
+        const mail = document.getElementById('emailClient').value || "N/A";
+        const adresse = document.getElementById('adresseChantier').value || "N/R";
+        const mSol = parseFloat(document.getElementById('mSol').value) || 0;
+        const mPl = parseFloat(document.getElementById('mPl').value) || 0;
+        
+        let totalSolNet = 0; let totalPlNet = 0; let detailPieces = "";
+        document.querySelectorAll('.piece-row').forEach(p => {
+            const nom = p.querySelector('.nom-piece').value || "Zone";
+            const s = parseFloat(p.querySelector('.val-sol').value) || 0;
+            const pl = parseFloat(p.querySelector('.val-pl').value) || 0;
+            if(s > 0 || pl > 0) { totalSolNet += s; totalPlNet += pl; detailPieces += `- ${nom} : ${s}m² / ${pl}ml\n`; }
+        });
+
+        const totalSolFinal = (totalSolNet * (1 + mSol/100)).toFixed(2);
+        const totalPlFinal = (totalPlNet * (1 + mPl/100)).toFixed(2);
+
+        texteAPartager = `🏢 GAREL & FILS - RELEVÉ\n`;
+        texteAPartager += `👤 CLIENT : ${client}\n📍 ADRESSE : ${adresse}\n📞 TEL : ${tel}\n✉️ MAIL : ${mail}\n`;
+        texteAPartager += `---------------------------\n🏗️ SUPPORT : ${document.getElementById('support').value}\n- ÉTANCHÉITÉ : ${document.getElementById('etancheite').value}\n- PRIMAIRE : ${document.getElementById('primaire').value}\n`;
+        texteAPartager += `---------------------------\n🏠 DÉTAIL PIÈCES :\n${detailPieces}`;
+        texteAPartager += `---------------------------\n📐 TOTAL COMMANDE :\n- CARRELAGE : ${totalSolFinal} m² (${mSol}% marge)\n- PLINTHES : ${totalPlFinal} ml (${mPl}% marge)\n`;
+        if(document.getElementById('bag').value > 0) texteAPartager += `- PROFILÉS : ${document.getElementById('bag').value} U\n`;
+        texteAPartager += `\n🎨 TECHNIQUE :\n- FORMAT : ${document.getElementById('format').value}\n- JOINT : ${document.getElementById('joint').value}\n- SILICONE : ${document.getElementById('silicone').value}\n`;
+        texteAPartager += `\n📝 NOTES : ${document.getElementById('note').value || "RAS"}\n`;
+        texteAPartager += `---------------------------\nGarel & Fils | 06 77 11 16 05`;
+
+        const res = document.getElementById('resultat');
+        res.innerText = texteAPartager; res.style.display = 'block';
+        document.getElementById('shareBtn').style.display = 'block';
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    async function partager() { if (navigator.share) { try { await navigator.share({ title: 'Métré Garel & Fils', text: texteAPartager }); } catch (err) {} } }
+</script>
+</body>
+</html>
