@@ -10,6 +10,7 @@
         .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 450px; margin: auto; }
         
         .header { text-align: center; margin-bottom: 15px; border-bottom: 2px solid var(--dark); padding-bottom: 15px; }
+        .header img { width: 120px; height: auto; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; }
         .header h1 { margin: 0; font-size: 1.4rem; letter-spacing: 1px; }
         .header .infos { font-size: 0.85rem; font-weight: bold; margin-top: 5px; color: #444; line-height: 1.4; }
         
@@ -39,6 +40,7 @@
 
 <div class="card">
     <div class="header">
+        <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
         <h1>GAREL & FILS</h1>
         <div class="infos">📞 06 77 11 16 05<br>✉️ acri42@yahoo.fr</div>
     </div>
@@ -66,7 +68,7 @@
     <button type="button" class="btn-add" onclick="ajouterPiece()">+ AJOUTER UNE PIÈCE</button>
 
     <div class="section-title">📸 Photos du Chantier</div>
-    <label for="photo-upload" class="btn-photo">📷 AJOUTER DES PHOTOS</label>
+    <label for="photo-upload" class="btn-photo">📷 PRENDRE / AJOUTER DES PHOTOS</label>
     <input type="file" id="photo-upload" class="input-file" accept="image/*" multiple onchange="previewPhotos()">
     <div id="photo-preview-container" class="photo-container"></div>
 
@@ -98,12 +100,10 @@
     <select id="format">
         <option>Standard (45x45 / 60x60)</option>
         <option>Petit format (10x10 / 20x20)</option>
-        <option>Métro / Crédence</option>
         <option>Lame Parquet</option>
         <option>Rectangulaire (30x60 / 30x90)</option>
         <option>Grand Format (80x80 / 90x90)</option>
         <option>XXL (120x120+)</option>
-        <option>Mosaïque / Galets</option>
     </select>
     <div class="row">
         <div class="col"><label>Joint</label><select id="joint"><option>Gris Clair</option><option>Anthracite</option><option>Beige</option><option>Époxy</option></select></div>
